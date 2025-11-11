@@ -16,8 +16,8 @@ const CATALOG_ITEMS = [
         detalhes: " :( ",
         preco: "R$ 100,90",
         estoque: 2,
-        Material: "coisas",
-        dimencoes: "30cm x 25cm"
+        material: "coisas",
+        dimensoes: "30cm x 25cm"
     },
     {
         id: 3,
@@ -36,8 +36,8 @@ const CATALOG_ITEMS = [
         detalhes: " :) ",
         preco: "R$ 10,90",
         estoque: 5,
-        Material: "isso",
-        dimencoes: "20cm x 23cm"
+        material: "isso",
+        comprimento: "50cm"
     },
 ]
 
@@ -48,6 +48,7 @@ Adiciona listeners aos botões "Ver Detalhes" para popular o modal dinamicamente
 const modalElement = document.querySelector('#detalheModal');
 const modalTitle = modalElement.querySelector('.modal-title');
 const modalBody = modalElement.querySelector('.modal-body');
+const modalAction = modalElement.querySelector('.btn-success');
 
 modalElement.addEventListener('show.bs.modal', function (event) {
     
@@ -56,12 +57,56 @@ modalElement.addEventListener('show.bs.modal', function (event) {
     
     const item = CATALOG_ITEMS.find(i => i.id === itemId);
     
+    
     if (item) {
+        
         modalTitle.textContent = item.titulo;
-    } let deailsHTML = `
-    <p class="mb-1"><strong>Categoria:</strong> <span class="badge bg-secondary" ${item.categoria}</p>
-    <p class="fs-4 fw-bold text-success mb-3">Preco: ${item.preco}</p>
-    <hr>
-    <p>${item.detalhes}</p>
-    `;
+        
+        let deailsHTML = `
+            <p class="mb-1"><strong>Categoria:</strong> <span class="badge bg-secondary">${item.categoria}</span></p>
+            <p class="fs-4 fw-bold text-success mb-3">Preço: ${item.preco}</p>
+            <hr>
+            <p>${item.detalhes}</p>
+            `;
+        
+        if (item.categoria === 'Livros') {
+            deailsHTML += `<p><strong>Autor:</strong> ${item.autor}</p>`;
+            deailsHTML += `<p><strong>Lançamento:</strong> ${item.lancamento}</p>`;
+            deailsHTML += `<p class="text-info"><strong>Estoque Disponível:</strong> ${item.estoque}</p>`;
+        } else if (item.categoria === 'Artesanato') {
+            deailsHTML += `<p><strong>Material:</strong> ${item.material}</p>`;
+            deailsHTML += `<p><strong>Dimensões/Comprimento:</strong> ${item.dimensoes || item.comprimento}</p>`;
+            deailsHTML += `<p class="text-info"><strong>peças Exclusivas em Estoque:</strong> ${item.estoque}</p>`;
+        }
+
+        modalBody.innerHTML = deailsHTML;
+
+        modalAction.onclick = () => {
+            console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho.`);
+
+            const bsModal = bootstrap.Modal.getInstance(modalElement);
+            if(bsModal) bsModal.hide();
+        };
+        
+    }
+});
+
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
+const items = document.querySelectorAll('.item-catalogo');
+
+function executarPesquisa(event) {
+
+}
+
+searchButton.addEventListener('click', executarPesquisa);
+
+searchInput.addEventListener('keyup', (event) => {
+
+    if (event.key === 'Enter') {
+        executarPesquisa(event);
+    } else if (searchInput.ariaValueMax.trim() === "") {
+        
+        executarPesquisa(event);
+    }
 });
