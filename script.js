@@ -78,12 +78,12 @@ modalElement.addEventListener('show.bs.modal', function (event) {
             deailsHTML += `<p><strong>Dimensões/Comprimento:</strong> ${item.dimensoes || item.comprimento}</p>`;
             deailsHTML += `<p class="text-info"><strong>peças Exclusivas em Estoque:</strong> ${item.estoque}</p>`;
         }
-
+        
         modalBody.innerHTML = deailsHTML;
-
+        
         modalAction.onclick = () => {
             console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho.`);
-
+            
             const bsModal = bootstrap.Modal.getInstance(modalElement);
             if(bsModal) bsModal.hide();
         };
@@ -97,25 +97,25 @@ const items = document.querySelectorAll('.item-catalogo');
 
 function executarPesquisa(event) {
     event.preventDefault();
-
+    
     const query = searchInput.value.toLowerCase().trim();
-
+    
     items.forEach(item => {
-    const title = item.querySelector('.card-title').textContent.toLowerCase();
-    const category = item.getAttribute('data-categoria').toLowerCase();
-
-    if (title.includes(query) || category.includes(query) || query === "") {
-        item.style.display = 'block';
-    } else {
-        item.style.display ='none';
-    }
+        const title = item.querySelector('.card-title').textContent.toLowerCase();
+        const category = item.getAttribute('data-categoria').toLowerCase();
+        
+        if (title.includes(query) || category.includes(query) || query === "") {
+            item.style.display = 'block';
+        } else {
+            item.style.display ='none';
+        }
     });
 }
 
 searchButton.addEventListener('click', executarPesquisa);
 
 searchInput.addEventListener('keyup', (event) => {
-
+    
     if (event.key === 'Enter') {
         executarPesquisa(event);
     } else if (searchInput.value.trim() === "") {
@@ -130,16 +130,55 @@ items.forEach ((card, index) => {
     const title = card.querySelector('.card-title');
     const category = card.querySelectorAll('.card-text')[0];
     const description = card.querySelectorAll('.card-text')[1];
-
+    
     const item = CATALOG_ITEMS.find(i => i.id === (index + 1));
-
+    
     if (item) {
         img.src = img.src.replace(/\?text=(.*)/, "?text=" + item.categoria.toUpperCase());
-
+        
         title.textContent = item.titulo;
-
+        
         category.textContent = "Categoria: " + item.categoria;
-
+        
         description.textContent = item.detalhes;
     }
 });
+
+const CART_STORAGE_KEY = 'shopping_cart';
+
+function obterCarrinhoDoNavegador() {
+    
+    try {
+        const cookie = localStorage.getItem(CART_STORAGE_KEY);
+        if (cookie) {
+            return JSON.parse(cookie);
+        }
+        
+    } catch (e) {
+        console.error("Falha ao ler o cookie do armazenamento local.");
+    }
+    
+    return [];
+}
+
+function salvarCookieCarrinho(itensCarrinho) {
+    
+    try {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(itensCarrinho));
+        
+    } catch (e) {
+        console.error("ERRO: Falha ao salvar carrinho no navegador. Erro:", e);
+    }
+}
+function atualizarContadorCarrinho() {
+    
+}
+
+
+function adicionarItemCarrinho(itemId) {
+
+    const carrinho = obterCarrinhoDoNavegador();
+    carrinho.push(itemId);
+    salvarCookieCarrinho();
+    atualizaContadorCarrinho();
+}
