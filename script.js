@@ -82,6 +82,8 @@ modalElement.addEventListener('show.bs.modal', function (event) {
         modalBody.innerHTML = deailsHTML;
         
         modalAction.onclick = () => {
+
+            adicionarItemCarrinho(item.id);
             console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho.`);
             
             const bsModal = bootstrap.Modal.getInstance(modalElement);
@@ -153,7 +155,6 @@ function obterCarrinhoDoNavegador() {
         if (cookie) {
             return JSON.parse(cookie);
         }
-        
     } catch (e) {
         console.error("Falha ao ler o cookie do armazenamento local.");
     }
@@ -170,15 +171,32 @@ function salvarCookieCarrinho(itensCarrinho) {
         console.error("ERRO: Falha ao salvar carrinho no navegador. Erro:", e);
     }
 }
+
 function atualizarContadorCarrinho() {
+    const carrinho = obterCarrinhoDoNavegador();
     
+    const carrinhoBadge = document.getElementById("cart-count");
+    
+    if (carrinhoBadge) {
+        carrinhoBadge.textContent =carrinho.length;
+        
+        if (carrinho.length > 0) {
+            carrinhoBadge.classList.remove('d-none');
+            
+        } else {
+            carrinhoBadge.classList.add('d-none')
+            
+        }
+    }
 }
 
 
 function adicionarItemCarrinho(itemId) {
-
+    
     const carrinho = obterCarrinhoDoNavegador();
     carrinho.push(itemId);
-    salvarCookieCarrinho();
-    atualizaContadorCarrinho();
+    salvarCookieCarrinho(carrinho);
+    atualizarContadorCarrinho();
 }
+
+atualizarContadorCarrinho();
