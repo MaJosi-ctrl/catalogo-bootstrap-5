@@ -200,3 +200,18 @@ function adicionarItemCarrinho(itemId) {
 }
 
 atualizarContadorCarrinho();
+
+const carrinho_btn = document.getElementById("cart-button");
+
+carrinho_btn.addEventListener("click", function() {
+
+    const carrinho_secao = document.getElementById("card_section");
+    carrinho_secao.classList.toggle("d-none");
+
+    if (carrinho_secao.classList.contains("d-none")) {
+        return;
+    }
+
+    const carrinho_recibo = document.getElementById("cart-list");
+    carrinho_recibo.innerHTML
+})
